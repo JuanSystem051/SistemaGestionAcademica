@@ -1,10 +1,13 @@
 class ProgramaAcademico:
+    """Representa un programa académico de la universidad."""
 
     def __init__(self, codigo, nombre, facultad, numero_semestres):
+        """Inicializa el programa. Lanza ValueError si los semestres son inválidos."""
         self.__codigo = codigo
         self.__nombre = nombre
         self.__facultad = facultad
-        self.set_numero_semestres(numero_semestres)
+        if not self.set_numero_semestres(numero_semestres):
+            raise ValueError("El número de semestres debe ser mayor que cero.")
 
     def get_codigo(self):
         return self.__codigo
@@ -19,12 +22,15 @@ class ProgramaAcademico:
         return self.__numero_semestres
 
     def set_numero_semestres(self, numero):
-        if numero > 0:
+        """Actualiza los semestres si son > 0. Retorna True si se modificó."""
+        if isinstance(numero, (int, float)) and numero > 0:
             self.__numero_semestres = numero
-        else:
-            print("Error: El número de semestres debe ser mayor que cero.")
+            return True
+        print("Error: El número de semestres debe ser mayor que cero.")
+        return False
 
     def mostrar_informacion(self):
+        """Muestra los datos principales del programa."""
         print(f"Código: {self.__codigo}")
         print(f"Nombre: {self.__nombre}")
         print(f"Facultad: {self.__facultad}")

@@ -136,11 +136,24 @@ base_datos.mostrar_informacion()
 # VALIDACIONES
 # =====================================
 
-print("\n===== VALIDACIONES =====")
+print("\n===== MODIFICACIONES VÁLIDAS =====")
+
+estudiante1.set_correo("ana.lopez@umanizales.edu.co")
+sistemas.set_numero_semestres(9)
+poo.set_creditos(5)
+estudiante1.set_semestre(4)
+print(f"Nuevo correo: {estudiante1.get_correo()}")
+print(f"Nuevos semestres: {sistemas.get_numero_semestres()}")
+print(f"Nuevos créditos: {poo.get_creditos()}")
+print(f"Nuevo semestre: {estudiante1.get_semestre()}")
+
+print("\n===== INTENTOS DE VALORES INVÁLIDOS =====")
 
 estudiante1.set_correo("")
 sistemas.set_numero_semestres(0)
 poo.set_creditos(-1)
+estudiante1.set_promedio(7)
+docente1.set_horas(0)
 
 # =====================================
 # POLIMORFISMO

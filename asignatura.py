@@ -1,10 +1,13 @@
 class Asignatura:
+    """Representa una asignatura perteneciente a un programa académico."""
 
     def __init__(self, codigo, nombre, creditos, programa):
+        """Inicializa la asignatura. Lanza ValueError si los créditos son inválidos."""
         self.__codigo = codigo
         self.__nombre = nombre
         self.__programa = programa
-        self.set_creditos(creditos)
+        if not self.set_creditos(creditos):
+            raise ValueError("Los créditos deben ser mayores que cero.")
 
     def get_codigo(self):
         return self.__codigo
@@ -19,12 +22,15 @@ class Asignatura:
         return self.__programa
 
     def set_creditos(self, creditos):
-        if creditos > 0:
+        """Actualiza los créditos si son > 0. Retorna True si se modificó."""
+        if isinstance(creditos, (int, float)) and creditos > 0:
             self.__creditos = creditos
-        else:
-            print("Error: Los créditos deben ser mayores que cero.")
+            return True
+        print("Error: Los créditos deben ser mayores que cero.")
+        return False
 
     def mostrar_informacion(self):
+        """Muestra la información de la asignatura."""
         print(f"Código: {self.__codigo}")
         print(f"Nombre: {self.__nombre}")
         print(f"Créditos: {self.__creditos}")

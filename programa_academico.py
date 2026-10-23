@@ -1,3 +1,6 @@
+from excepciones import ProgramaAcademicoNoEncontradoError
+
+
 class ProgramaAcademico:
     """Representa un programa académico de la universidad."""
 
@@ -35,3 +38,13 @@ class ProgramaAcademico:
         print(f"Nombre: {self.__nombre}")
         print(f"Facultad: {self.__facultad}")
         print(f"Semestres: {self.__numero_semestres}")
+
+    @staticmethod
+    def buscar_programa(lista_programas, codigo):
+        """Busca un programa por su código. Lanza ProgramaAcademicoNoEncontradoError si no existe."""
+        for programa in lista_programas:
+            if programa.get_codigo() == codigo:
+                return programa
+        raise ProgramaAcademicoNoEncontradoError(
+            f"Error: El programa académico con código '{codigo}' no existe en el sistema."
+        )

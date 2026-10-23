@@ -1,5 +1,8 @@
-class Persona:
-    """Clase base que representa a una persona vinculada a la universidad."""
+from abc import ABC, abstractmethod
+
+
+class Persona(ABC):
+    """Clase base abstracta que representa a una persona vinculada a la universidad."""
 
     def __init__(self, identificacion, nombre, correo):
         """Inicializa la persona. Lanza ValueError si el correo es vacío."""
@@ -31,8 +34,7 @@ class Persona:
         print(f"Nombre: {self.__nombre}")
         print(f"Correo: {self.__correo}")
 
+    @abstractmethod
     def realizar_actividad_principal(self):
-        """Debe ser sobrescrito por cada tipo de persona."""
-        raise NotImplementedError(
-            "Las subclases deben implementar realizar_actividad_principal()."
-        )
+        """Método abstracto que debe ser implementado por cada subclase de Persona."""
+        pass

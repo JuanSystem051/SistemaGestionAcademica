@@ -1,3 +1,6 @@
+from excepciones import AsignaturaNoEncontradaError
+
+
 class Asignatura:
     """Representa una asignatura perteneciente a un programa académico."""
 
@@ -35,3 +38,13 @@ class Asignatura:
         print(f"Nombre: {self.__nombre}")
         print(f"Créditos: {self.__creditos}")
         print(f"Programa: {self.__programa.get_nombre()}")
+
+    @staticmethod
+    def buscar_asignatura(lista_asignaturas, codigo):
+        """Busca una asignatura por su código. Lanza AsignaturaNoEncontradaError si no existe."""
+        for asignatura in lista_asignaturas:
+            if asignatura.get_codigo() == codigo:
+                return asignatura
+        raise AsignaturaNoEncontradaError(
+            f"Error: La asignatura con código '{codigo}' no existe en el sistema."
+        )

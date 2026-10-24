@@ -1,46 +1,72 @@
-**Sistema de Gestión Académica**
+# Sistema de Gestión Académica
 
 **Integrantes:**
-
 * Legna Liliana Ferreira Rosas
 * Juan David Perdomo Rojas
 
-**Asignatura:** Programación I
+**Asignatura:** Programación I  
 **Universidad:** Universidad de Manizales
 
-**Descripción general:**
-Sistema en Python, desarrollado con Programación Orientada a Objetos, que gestiona estudiantes, docentes, administrativos, programas académicos y asignaturas. Es un único proyecto que integra todas las fases de la actividad.
+---
 
-**Estructura de archivos:**
+## Descripción General
+Sistema en Python desarrollado bajo los principios de la Programación Orientada a Objetos (POO) que gestiona personas vinculadas a la universidad (estudiantes, docentes y administrativos), programas académicos, asignaturas, horarios y oferta de grupos académicos con procesos de matrícula y retiro.
 
-* main.py: programa principal. Crea los objetos, demuestra las validaciones y el polimorfismo.
-* persona.py: clase base Persona.
-* estudiante.py: clase Estudiante (hereda de Persona).
-* docente.py: clase Docente (hereda de Persona).
-* administrativo.py: clase Administrativo (hereda de Persona).
-* programa\_academico.py: clase ProgramaAcademico.
-* asignatura.py: clase Asignatura.
+El proyecto corresponde a un único sistema evolutivo que integra la **Actividad Colaborativa N°1** (clases, constructores, encapsulamiento, herencia, sobrescritura y polimorfismo) y la **Actividad Colaborativa N°2** (clases abstractas, relación de composición y control de excepciones personalizadas).
 
-**Ejecución:**
+---
+
+## Estructura de Archivos
+
+* `main.py`: Programa principal. Ejecuta todas las pruebas del sistema: imposibilidad de instanciar `Persona`, creación de objetos, validaciones de encapsulamiento, recorrido polimórfico, gestión de grupos académicos, matrículas, retiros y manejo de excepciones personalizadas.
+* `persona.py`: Clase base abstracta `Persona` (`ABC`).
+* `estudiante.py`: Clase `Estudiante` (hereda de `Persona`).
+* `docente.py`: Clase `Docente` (hereda de `Persona`).
+* `administrativo.py`: Clase `Administrativo` (hereda de `Persona`).
+* `programa_academico.py`: Clase `ProgramaAcademico` con búsqueda por código.
+* `asignatura.py`: Clase `Asignatura` con búsqueda por código.
+* `horario.py`: Clase `Horario` que modela día, hora de inicio, hora de finalización y salón.
+* `grupo_academico.py`: Clase `GrupoAcademico` que organiza la oferta académica y el proceso de matrícula.
+* `excepciones.py`: Clases de excepciones personalizadas del dominio académico.
+
+---
+
+## Ejecución
 Requiere Python 3. Desde la carpeta del proyecto ejecutar:
 
-&#x20;   python main.py
+```bash
+python main.py
+```
 
+---
 
+## Conceptos de POO Aplicados
 
-**Encapsulamiento:**
-Todos los atributos son privados y se consultan o modifican mediante métodos get y set. Los métodos set validan los datos: el correo no puede ser vacío, los semestres, créditos y horas deben ser mayores que cero y el promedio debe estar entre 0 y 5. Si el valor no es válido se informa el error y el dato no se modifica.
+### 1. Encapsulamiento
+Todos los atributos de las clases son privados (`__`) y se consultan o modifican mediante métodos `get` y `set`. Los métodos `set` validan los datos antes de asignarlos (correos y textos no vacíos, semestres/créditos/horas/cupos mayores que cero y promedio entre `0.0` y `5.0`).
 
-**Herencia:**
-Estudiante, Docente y Administrativo heredan de Persona, que contiene la información común (identificación, nombre y correo). Cada subclase llama a super().**init**() y agrega sus atributos propios.
+### 2. Herencia y Clases Abstractas
+En el dominio universitario no tiene sentido registrar una persona genérica sin definir su rol específico. Por ello, `Persona` se declara como una **clase abstracta** (`class Persona(ABC)`) y define `realizar_actividad_principal()` con el decorador `@abstractmethod`. Esto impide instanciar directamente objetos de tipo `Persona` y obliga a las subclases `Estudiante`, `Docente` y `Administrativo` a implementar su propio comportamiento especializado.
 
-**Sobrescritura:**
-Cada subclase redefine mostrar\_informacion(), que muestra los datos generales mediante super() y agrega los propios, y realizar\_actividad\_principal(), que produce un resultado distinto para cada tipo de persona.
+### 3. Sobrescritura y Polimorfismo
+Cada subclase de `Persona` sobrescribe `mostrar_informacion()` (invocando `super().mostrar_informacion()` y añadiendo sus atributos particulares) y `realizar_actividad_principal()`. En `main.py` se recorre una única lista heterogénea `personas` con un ciclo `for`, sin condicionales por tipo, ejecutando polimórficamente el comportamiento correspondiente a cada objeto.
 
-**Polimorfismo:**
-En main.py se crea una única lista con dos estudiantes, dos docentes y dos administrativos. Se recorre con un solo ciclo for que invoca mostrar\_informacion() y realizar\_actividad\_principal(), sin condicionales por tipo. Python ejecuta automáticamente la versión que corresponde a cada objeto.
+### 4. Relación de Composición (`GrupoAcademico` y `Horario`)
+Un `GrupoAcademico` **contiene** un objeto `Horario` que define los días, horas de inicio y finalización, y el salón donde se desarrolla el curso:
+* **¿Por qué el grupo académico contiene un horario?** Porque el horario hace parte estructural de la organización de un grupo ofertado (relación *"tiene un"* / *parte-todo*): cada grupo posee su propia programación horaria expresada como un objeto con atributos propios (`dia`, `hora_inicio`, `hora_finalizacion`, `salon`), evitando representarla como una simple cadena de texto aislada. Además, el constructor de `GrupoAcademico` instancia y encapsula internamente su propio objeto `Horario`, de modo que el ciclo de vida del horario queda ligado al grupo.
+* **¿Por qué esta relación NO corresponde a herencia?** La herencia modela relaciones de tipo *"es un"* (generalización/especialización), como `Estudiante` *es una* `Persona`. Un `GrupoAcademico` **no es un** `Horario`, ni un `Horario` es un tipo de `GrupoAcademico`; son conceptos de distinta naturaleza donde el horario actúa como un componente interno que describe cuándo y dónde funciona el grupo.
 
-**Declaración de uso de IA**
+### 5. Excepciones Personalizadas
+El módulo `excepciones.py` define cinco excepciones propias que heredan de `Exception`:
+* `EstudianteYaMatriculadoError`: Lanzada en `GrupoAcademico.matricular_estudiante()` cuando el estudiante ya está inscrito en el grupo.
+* `CapacidadMaximaAlcanzadaError`: Lanzada en `GrupoAcademico.matricular_estudiante()` cuando el grupo alcanzó su cupo máximo.
+* `EstudianteNoMatriculadoError`: Lanzada en `GrupoAcademico.retirar_estudiante()` cuando el código estudiantil no figura entre los matriculados del grupo.
+* `AsignaturaNoEncontradaError`: Lanzada en `Asignatura.buscar_asignatura()` cuando el código buscado no existe.
+* `ProgramaAcademicoNoEncontradoError`: Lanzada en `ProgramaAcademico.buscar_programa()` cuando el código buscado no existe.
 
-Los estudiantes utilizaron una herramienta de IA para la revisión de código, oportunidades de mejora y capacidad de comprensión del código mediante aprendizaje en la práctica, por lo cual, los integrantes del grupo comprenden la sintaxis del código y su funcionamiento
+Todas las excepciones son capturadas en `main.py` mediante bloques `try / except`, mostrando mensajes claros y permitiendo que el programa continúe su ejecución normal.
 
+---
+
+## Declaración de Uso de IA
+Los estudiantes utilizaron una herramienta de IA como apoyo para la revisión de código, estructuración documental, identificación de oportunidades de mejora y fortalecimiento de la comprensión práctica de los conceptos de clases abstractas, composición y manejo de excepciones en Python, por lo cual los integrantes del equipo comprenden la sintaxis del código, su diseño y su funcionamiento.

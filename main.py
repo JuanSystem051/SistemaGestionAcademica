@@ -1,8 +1,28 @@
+from persona import Persona
 from programa_academico import ProgramaAcademico
 from asignatura import Asignatura
 from estudiante import Estudiante
 from docente import Docente
 from administrativo import Administrativo
+from horario import Horario
+from grupo_academico import GrupoAcademico
+from excepciones import (
+    EstudianteYaMatriculadoError,
+    CapacidadMaximaAlcanzadaError,
+    EstudianteNoMatriculadoError,
+    AsignaturaNoEncontradaError,
+    ProgramaAcademicoNoEncontradoError,
+)
+
+# =====================================
+# PRUEBA 1: CLASE ABSTRACTA PERSONA
+# =====================================
+
+print("\n===== PRUEBA DE CLASE ABSTRACTA (PERSONA) =====")
+try:
+    persona_invalida = Persona("0000", "Usuario Genérico", "usuario@umanizales.edu.co")
+except TypeError as error:
+    print(f"No es posible instanciar directamente la clase abstracta Persona: {error}")
 
 # =====================================
 # CREACIÓN DE PROGRAMAS ACADÉMICOS
@@ -22,6 +42,8 @@ administracion = ProgramaAcademico(
     8
 )
 
+programas_sistema = [sistemas, administracion]
+
 # =====================================
 # CREACIÓN DE ASIGNATURAS
 # =====================================
@@ -39,6 +61,8 @@ base_datos = Asignatura(
     3,
     sistemas
 )
+
+asignaturas_sistema = [poo, base_datos]
 
 # =====================================
 # CREACIÓN DE ESTUDIANTES
@@ -62,6 +86,16 @@ estudiante2 = Estudiante(
     administracion,
     5,
     4.2
+)
+
+estudiante3 = Estudiante(
+    "1003",
+    "Sofía Martínez",
+    "sofiamartinez@umanizales.edu.co",
+    "EST003",
+    sistemas,
+    3,
+    4.7
 )
 
 # =====================================
@@ -133,7 +167,7 @@ print()
 base_datos.mostrar_informacion()
 
 # =====================================
-# VALIDACIONES
+# VALIDACIONES DE ENCAPSULAMIENTO
 # =====================================
 
 print("\n===== MODIFICACIONES VÁLIDAS =====")
@@ -159,11 +193,12 @@ docente1.set_horas(0)
 # POLIMORFISMO
 # =====================================
 
-print("\n===== PERSONAS DEL SISTEMA =====")
+print("\n===== PERSONAS DEL SISTEMA (POLIMORFISMO) =====")
 
 personas = [
     estudiante1,
     estudiante2,
+    estudiante3,
     docente1,
     docente2,
     administrativo1,
@@ -171,8 +206,111 @@ personas = [
 ]
 
 for persona in personas:
-
     print("\n---------------------------")
-
     persona.mostrar_informacion()
     persona.realizar_actividad_principal()
+
+# =====================================
+# CREACIÓN DE HORARIOS Y GRUPOS ACADÉMICOS
+# =====================================
+
+print("\n===== CREACIÓN DE HORARIOS Y GRUPOS ACADÉMICOS =====")
+
+horario_poo = Horario("Lunes y Miércoles", "08:00", "10:00", "Salón B-201")
+horario_bd = Horario("Martes y Jueves", "14:00", "16:00", "Laboratorio C-105")
+
+grupo_poo_01 = GrupoAcademico("GRP-POO-01", poo, docente1, 2, horario_poo)
+grupo_bd_01 = GrupoAcademico("GRP-BD-01", base_datos, docente1, 3, horario_bd)
+
+grupo_poo_01.mostrar_informacion_grupo()
+print()
+grupo_bd_01.mostrar_informacion_grupo()
+
+# =====================================
+# MATRÍCULA CORRECTA DE ESTUDIANTES
+# =====================================
+
+print("\n===== MATRÍCULA DE ESTUDIANTES =====")
+
+try:
+    grupo_poo_01.matricular_estudiante(estudiante1)
+    grupo_poo_01.matricular_estudiante(estudiante2)
+    grupo_bd_01.matricular_estudiante(estudiante1)
+    grupo_bd_01.matricular_estudiante(estudiante3)
+except (EstudianteYaMatriculadoError, CapacidadMaximaAlcanzadaError) as error:
+    print(error)
+
+print()
+grupo_poo_01.mostrar_informacion_grupo()
+grupo_poo_01.mostrar_estudiantes()
+
+print()
+grupo_bd_01.mostrar_informacion_grupo()
+grupo_bd_01.mostrar_estudiantes()
+
+# =====================================
+# EXCEPCIÓN: ESTUDIANTE DUPLICADO
+# =====================================
+
+print("\n===== PRUEBA: MATRÍCULA DE ESTUDIANTE DUPLICADO =====")
+try:
+    grupo_poo_01.matricular_estudiante(estudiante1)
+except EstudianteYaMatriculadoError as error:
+    print(error)
+
+# =====================================
+# EXCEPCIÓN: SUPERAR CAPACIDAD MÁXIMA
+# =====================================
+
+print("\n===== PRUEBA: SUPERAR CAPACIDAD MÁXIMA DEL GRUPO =====")
+try:
+    grupo_poo_01.matricular_estudiante(estudiante3)
+except CapacidadMaximaAlcanzadaError as error:
+    print(error)
+
+# =====================================
+# RETIRO CORRECTO DE UN ESTUDIANTE
+# =====================================
+
+print("\n===== RETIRO CORRECTO DE ESTUDIANTE =====")
+try:
+    grupo_poo_01.retirar_estudiante("EST002")
+    grupo_poo_01.mostrar_estudiantes()
+except EstudianteNoMatriculadoError as error:
+    print(error)
+
+# =====================================
+# EXCEPCIÓN: RETIRO DE ESTUDIANTE INEXISTENTE
+# =====================================
+
+print("\n===== PRUEBA: RETIRO DE ESTUDIANTE NO MATRICULADO =====")
+try:
+    grupo_poo_01.retirar_estudiante("EST999")
+except EstudianteNoMatriculadoError as error:
+    print(error)
+
+# =====================================
+# BÚSQUEDA DE ASIGNATURA (EXISTENTE E INEXISTENTE)
+# =====================================
+
+print("\n===== PRUEBA: BÚSQUEDA DE ASIGNATURA =====")
+try:
+    asignatura_encontrada = Asignatura.buscar_asignatura(asignaturas_sistema, "POO101")
+    print(f"Asignatura encontrada: {asignatura_encontrada.get_nombre()}")
+    Asignatura.buscar_asignatura(asignaturas_sistema, "FIS999")
+except AsignaturaNoEncontradaError as error:
+    print(error)
+
+# =====================================
+# BÚSQUEDA DE PROGRAMA (EXISTENTE E INEXISTENTE)
+# =====================================
+
+print("\n===== PRUEBA: BÚSQUEDA DE PROGRAMA ACADÉMICO =====")
+try:
+    programa_encontrado = ProgramaAcademico.buscar_programa(programas_sistema, "ING01")
+    print(f"Programa encontrado: {programa_encontrado.get_nombre()}")
+    ProgramaAcademico.buscar_programa(programas_sistema, "MED99")
+except ProgramaAcademicoNoEncontradoError as error:
+    print(error)
+
+print("\n===== FIN DE LA EJECUCIÓN: EL SISTEMA CONTINUÓ NORMALMENTE =====")
